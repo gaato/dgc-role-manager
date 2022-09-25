@@ -40,7 +40,7 @@ class SelectView1(discord.ui.View):
             self.roles[value] = self.guild.get_role(value)
         return super().__init__(timeout=None)
 
-    @discord.ui.select(placeholder='Pick your language...', custom_id='select-1', min_values=0, max_values=len(options1), options1=options1)
+    @discord.ui.select(placeholder='Pick your language...', custom_id='select-1', min_values=0, max_values=len(options1), options=options1)
     async def select_callback(self, select: discord.ui.Select, interaction: discord.Interaction):
         try:
             added_roles = []
