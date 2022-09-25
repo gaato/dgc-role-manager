@@ -21,7 +21,7 @@ async def on_ready():
     print("------")
     button_channel = client.get_channel(config.select_channel_id)
     view = SelectView1(client)
-    await button_channel.send('ご自身の役割を以下から選んでください。', view=view)
+    await button_channel.send('What language do you speak?\nあなたの話せる言語を選択してください。（複数選択可）', view=view)
     await client.close()
 
 

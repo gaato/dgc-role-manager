@@ -27,27 +27,32 @@ class ButtonView1(discord.ui.View):
             await interaction.response.send_message(f'You are verified! Go to <#{config.select_channel_id}> and select your role.\n認証されました！<#{config.select_channel_id}>に移動してロールを選択してください。', ephemeral=True)
         except Exception as e:
             traceback.print_exception(e)
-            await self.log_channel.send(f'{interaction.user.mention} への会員ロールの付与に失敗しました\n```\n{str(e)}\n```')
+            await self.log_channel.send(f'{interaction.user.mention} へのメンバーロールの付与に失敗しました\n```\n{str(e)}\n```')
 
 
 class SelectView1(discord.ui.View):
     def __init__(self, bot: discord.Client):
         self.bot = bot
         self.guild = self.bot.get_guild(config.guild_id)
+        self.log_channel = self.bot.get_channel(config.log_channel_id)
         self.roles = {}
         for _, value in config.options1:
             self.roles[value] = self.guild.get_role(value)
         return super().__init__(timeout=None)
 
-    @discord.ui.select(placeholder='役割を選択してください', custom_id='select-1', min_values=0, max_values=len(options1), options1=options1)
+    @discord.ui.select(placeholder='Pick your language...', custom_id='select-1', min_values=0, max_values=len(options1), options1=options1)
     async def select_callback(self, select: discord.ui.Select, interaction: discord.Interaction):
-        added_roles = []
-        removed_roles = []
-        for _, value in config.options1:
-            if str(value) in select.values:
-                added_roles.append(self.roles[int(value)])
-            else:
-                removed_roles.append(self.roles[int(value)])
-        await interaction.user.add_roles(*added_roles)
-        await interaction.user.remove_roles(*removed_roles)
-        await interaction.response.send_message('役割を選択しました。', ephemeral=True)
+        try:
+            added_roles = []
+            removed_roles = []
+            for _, value in config.options1:
+                if str(value) in select.values:
+                    added_roles.append(self.roles[int(value)])
+                else:
+                    removed_roles.append(self.roles[int(value)])
+            await interaction.user.add_roles(*added_roles)
+            await interaction.user.remove_roles(*removed_roles)
+            await interaction.response.send_message('Language selection succeeded!\n言語選択に成功しました！', ephemeral=True)
+        except Exception as e:
+            traceback.print_exception(e)
+            await self.log_channel.send(f'{interaction.user.mention} へのロールの付与・除去に失敗しました\n```\n{str(e)}\n```')
